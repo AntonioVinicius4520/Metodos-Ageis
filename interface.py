@@ -1,4 +1,6 @@
 from PySimpleGUI import *
+from op_B3 import *
+from banco import *
 theme('Darkblue12')
 def janela_update():
     campo=['data', 'codigo', 'quantidade', 'valor_unitario' , 'tipo_op', 'corretagem']
@@ -37,3 +39,98 @@ def cadastro():
         [Text(key='Valor da operação')],
     ]
     return Window('SHELBY STOCKS', layout= layout, finalize=True)
+
+#João Emanuel
+janela1, janela2, janela3= cadastro(), criar_tabela(), None
+
+while True:
+    window, eventos, valores= read_all_windows()
+    if window == janela1 and eventos == WIN_CLOSED:
+        janela1.close()
+    if window == janela1 and eventos == 'Fechar Programa':
+        break
+    if window == janela2 and eventos == 'Cadastro de operações':
+        janela1 = cadastro()
+    if window == janela1 and eventos == 'Mostrar Tabela':
+        janela2= criar_tabela()
+    if window == janela1 and  eventos == 'Salvar':
+        quantidades= valores['quantidade']
+        valor_unit= valores['valor_unitario']
+        corretagens= valores['corretagem']
+        if valores['Date'] == '' or valores['código'] == '' or valores['quantidade'] == '' or valores['Tipo_de_operação'] == '' or valores['valor_unitario'] == '' or valores['corretagem'] == '' :
+            popup('Você não completou todos os campos')
+        else:
+            try:
+                valor= int(quantidades)
+                valor2= float(valor_unit)
+                valor3= float(corretagens)
+            except:
+                popup('Quantidade, valor unitario e corretagem inválido. Digite novamente')
+            else:
+                datas= valores['Date']
+                codigos= valores['código']
+                tipo_operacao= valores['Tipo_de_operação']
+                banco= BancoOperacao()
+                acao= OperacaoB3(datas,codigos, valor, valor2, tipo_operacao, valor3)
+                banco.cadastrar_acao(acao.data, acao.codigo, acao.quantidade, acao.valor_unitario,
+                            acao.tipo, acao.corretagem, acao.valor_operacao_sem_taxa,
+                            acao.taxaB3, acao.valor_operacao_com_taxa)
+    if window == janela2 and eventos == WIN_CLOSED:
+        janela2.close()
+    if window == janela2 and eventos == 'Mostrar Tabela':
+        banco2= BancoOperacao()
+        valor= [banco2.mostrar_acoes()]
+        valores_tabela2= []
+        janela2['tabela'].update(valores_tabela2)
+        for acao in valor:
+            for dados in acao:
+                valores_tabela2.append(dados)
+        janela2['tabela'].update(valores_tabela2)
+
+            
+    if window == janela2 and eventos == 'Search':
+        codi= valores['Pesquisa']
+        banco3= BancoOperacao()
+        lista_pesquisa= banco3.pesquisar_acao(codi)
+        valores_tabela2= []
+        janela2['tabela'].update(valores_tabela2)
+        for i in lista_pesquisa:
+            valores_tabela2.append(i)
+        janela2['tabela'].update(valores_tabela2)
+
+    if window == janela2 and eventos == 'Delete':
+        id= valores['Deleta']
+        if id == '':
+            popup('Você não colocou nenhuma informação')
+        else:
+            try:
+                valor= int(id)
+            except:
+                popup('Valor não é inteiro')
+            else:
+                banco4= BancoOperacao()
+                banco4.deletar_acao(id)
+                popup(f'A ação que possui o id {id} foi deletado',auto_close= True ,auto_close_duration=2)
+                janela2['tabela'].update(valores_tabela2)
+    if window == janela2 and eventos == 'Fazer Alterções':
+        janela3= janela_update()
+
+    if window == janela3 and eventos == WIN_CLOSED:
+        janela3.close()
+
+    if window == janela3 and eventos == 'UPDATE':
+        campo2= valores['Update']
+        alterar= valores['alterar']
+        id2= valores['ids']
+        if alterar == '' or id2 == '':
+            popup('Você não completou  todos os campos')
+        else:
+            banco5= BancoOperacao()
+            banco5.atualizar_acao(campo2, alterar, id2)
+            valor= [banco5.mostrar_acoes()]
+            valores_tabela2= []
+            janela2['tabela'].update(valores_tabela2)
+            for acao in valor:
+                for dados in acao:
+                    valores_tabela2.append(dados)
+            janela2['tabela'].update(valores_tabela2)
