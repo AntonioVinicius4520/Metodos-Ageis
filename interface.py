@@ -2,6 +2,13 @@ from PySimpleGUI import *
 from op_B3 import *
 from banco import *
 theme('Darkblue12')
+def tabela_media():
+    headings3=['CÓDIGO', 'MÉDIA']
+    valores_tabela3=[]
+    layout=[[Table(values=valores_tabela3, headings=headings3, key='media', auto_size_columns=False, def_col_width= 20)],
+            [Button('Mostrar Média')]
+    ]
+    return Window('Média da Ação', layout=layout, finalize=True, location=(1000, 0))
 def janela_update():
     campo=['data', 'codigo', 'quantidade', 'valor_unitario' , 'tipo_op', 'corretagem']
     layout=[
@@ -12,7 +19,7 @@ def janela_update():
         [Text(key='Atualizar')],
         [Button('UPDATE')]
     ]
-    return Window('ATUALIZAÇÃO DE DADOS', layout=layout, finalize=True)
+    return Window('ATUALIZAÇÃO DE DADOS', layout=layout, finalize=True, location=(500, 0))
 
 
 def criar_tabela():
@@ -21,7 +28,7 @@ def criar_tabela():
     layout=[[Text('Pesquisar ação:'),Input(key='Pesquisa', size=(20, 20), do_not_clear=False), Button('Search')],
         [Text('Deletar ação: '),Input(key='Deleta',size=(10,10), do_not_clear=False), Button('Delete')],
         [Text(key='Tabela'),Table(values= valores_tabela2, headings= headings2,key= 'tabela',auto_size_columns= False, def_col_width= 15)],
-        [Button('Mostrar Tabela'),Button('Cadastro de operações') ,Button('Fazer Alterções')]
+        [Button('Mostrar Tabela'),Button('Cadastro de operações') ,Button('Fazer Alterções'), Button('Mostrar as médias')]
     ]
     return Window('Tabela', layout=layout, finalize=True)
 
@@ -38,7 +45,7 @@ def cadastro():
         [Button('Salvar'), Button('Fechar Programa'), Button('Mostrar Tabela')],
         [Text(key='Valor da operação')],
     ]
-    return Window('SHELBY STOCKS', layout= layout, finalize=True)
+    return Window('SHELBY STOCKS', layout= layout, finalize=True, location=(0,0))
 
 #João Emanuel
 janela1, janela2, janela3= cadastro(), criar_tabela(), None
