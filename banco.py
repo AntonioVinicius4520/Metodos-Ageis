@@ -79,3 +79,10 @@ class BancoOperacao():
         acao = OperacaoB3(dados_acao[1], dados_acao[2], dados_acao[3],
                           dados_acao[4], dados_acao[5], dados_acao[6])
         return acao
+
+    def calcular_media_acoes(self):
+        lista_media= []
+        for row in self.cur.execute(
+            "SELECT codigo, ROUND((sum(valor_operacao_com_taxa)/sum(quantidade)), 2) FROM acao WHERE tipo_op='compra' GROUP BY codigo"):
+            lista_media.append(row)
+        return lista_media
